@@ -2,21 +2,17 @@
 
 namespace app\valueObjects;
 
-class LoanRequestStatus
+enum LoanRequestStatus: string
 {
-    public const string PENDING = "pending";
-    public const string APPROVED = "approved";
-    public const string DECLINED = "declined";
+    case PENDING = "pending";
+    case APPROVED = "approved";
+    case DECLINED = "declined";
 
     /**
      * @return string[]
      */
     public static function getValues(): array
     {
-        return [
-            self::PENDING,
-            self::APPROVED,
-            self::DECLINED
-        ];
+        return array_column(self::cases(), 'value');
     }
 }

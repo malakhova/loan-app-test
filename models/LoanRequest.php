@@ -59,7 +59,7 @@ class LoanRequest extends ActiveRecord
             [[self::ATTR_USER_ID, self::ATTR_AMOUNT, self::ATTR_TERM], 'required'],
             [[self::ATTR_USER_ID, self::ATTR_AMOUNT, self::ATTR_TERM], 'integer'],
             [[self::ATTR_USER_ID, self::ATTR_AMOUNT, self::ATTR_TERM], 'default', 'value' => null],
-            [[self::ATTR_STATUS ], 'default', 'value' => LoanRequestStatus::PENDING],
+            [[self::ATTR_STATUS ], 'default', 'value' => LoanRequestStatus::PENDING->value],
             [self::ATTR_STATUS, 'in', 'range' => LoanRequestStatus::getValues()],
             [[self::ATTR_PROCESSED_AT], 'safe'],
             [[self::ATTR_PROCESSED_AT], 'default', 'value' => null],

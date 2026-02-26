@@ -3,6 +3,7 @@
 namespace app\repositories;
 
 use app\models\LoanRequest;
+use app\valueObjects\LoanRequestStatus;
 
 interface LoanRequestRepositoryInterface
 {
@@ -11,10 +12,10 @@ interface LoanRequestRepositoryInterface
      * @param int $userId
      * @param int $amount
      * @param int $term
-     * @param string $status
+     * @param LoanRequestStatus $status
      * @return LoanRequest
      */
-    public function createOne(int $userId, int $amount, int $term, string $status): LoanRequest;
+    public function createOne(int $userId, int $amount, int $term, LoanRequestStatus $status): LoanRequest;
 
     /**
      * Check if a user has approved loan requests
@@ -33,7 +34,7 @@ interface LoanRequestRepositoryInterface
     /**
      * Process loan request with status
      * @param LoanRequest $loanRequest
-     * @param string $processStatus
+     * @param LoanRequestStatus $processStatus
      */
-    public function processOne(LoanRequest $loanRequest, string $processStatus): void;
+    public function processOne(LoanRequest $loanRequest, LoanRequestStatus $processStatus): void;
 }

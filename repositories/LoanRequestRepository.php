@@ -14,13 +14,13 @@ class LoanRequestRepository implements LoanRequestRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createOne(int $userId, int $amount, int $term, string $status): LoanRequest
+    public function createOne(int $userId, int $amount, int $term, LoanRequestStatus $status): LoanRequest
     {
         $loanRequest = new LoanRequest();
         $loanRequest->user_id = $userId;
         $loanRequest->amount = $amount;
         $loanRequest->term = $term;
-        $loanRequest->status = $status;
+        $loanRequest->status = $status->value;
         $loanRequest->processed_at = DateTimeHelper::getNowTimestamp();
         $loanRequest->save();
         return $loanRequest;
@@ -34,7 +34,7 @@ class LoanRequestRepository implements LoanRequestRepositoryInterface
         return LoanRequest::find()
             ->where([
                 LoanRequest::ATTR_USER_ID => $userId,
-                LoanRequest::ATTR_STATUS => LoanRequestStatus::APPROVED,
+                LoanRequest::ATTR_STATUS => LoanRequestStatus::APPROVED->value,
             ])
             ->exists();
     }
@@ -45,21 +45,21 @@ class LoanRequestRepository implements LoanRequestRepositoryInterface
     public function findAllPending(): array
     {
         return LoanRequest::find()
-            ->where([LoanRequest::ATTR_STATUS => LoanRequestStatus::PENDING])
+            ->where([LoanRequest::ATTR_STATUS => LoanRequestStatus::PENDING->value])
             ->all();
     }
 
     /**
      * @inheritDoc
      */
-    public function processOne(LoanRequest $loanRequest, string $processStatus): void
+    public function processOne(LoanRequest $loanRequest, LoanRequestStatus $processStatus): void
     {
         $transaction = Yii::$app->db->beginTransaction(Transaction::REPEATABLE_READ);
 
         try {
             $lockedRequest = $this->findOneByIdAndStatus(
                 $loanRequest->id,
-                LoanRequestStatus::PENDING
+                LoanRequestStatus::PENDING->value
             );
 
             if (!$lockedRequest) {
@@ -67,7 +67,7 @@ class LoanRequestRepository implements LoanRequestRepositoryInterface
                 return;
             }
 
-            $loanRequest->status = $processStatus;
+            $loanRequest->status = $processStatus->value;
             $loanRequest->processed_at = DateTimeHelper::getNowTimestamp();
             $loanRequest->save();
             $transaction->commit();
